@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜数字游戏</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#EC4899',
+                        accent: '#8B5CF6',
+                        neutral: '#1F2937',
+                        'neutral-light': '#F3F4F6',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .bg-glass {
+                background: rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gradient-to-br from-indigo-50 to-purple-50 min-h-screen flex flex-col">
+    <!-- 烟花特效容器 -->
+    <div id="fireworks-container" class="fixed inset-0 pointer-events-none z-50 hidden"></div>
+
+    <header class="w-full bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-40 transition-all duration-300">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-gamepad text-primary text-2xl"></i>
+                <h1 class="text-xl md:text-2xl font-bold text-neutral">猜数字游戏</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8 flex flex-col">
+        <div class="bg-white rounded-xl shadow-md p-6 mb-6 transition-all duration-300">
+            <h2 class="text-xl font-bold text-neutral mb-4 flex items-center">
+                <i class="fa fa-magic text-primary mr-2"></i>Jimmy，神秘数字已生成，快来猜猜看吧！
+            </h2>
+
+            <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                <div class="relative flex-grow">
+                    <input type="tel" id="guess-input" maxlength="2" placeholder="输入你的猜测" 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                        pattern="[1-9]{2}">
+                    <div id="input-error" class="absolute bottom-[-22px] left-0 text-red-500 text-xs hidden">
+                        请输入有效的两位数字（1-9，不可重复）
+                    </div>
+                </div>
+                <button id="guess-button" 
+                    class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center">
+                    <i class="fa fa-paper-plane mr-2"></i>
+                    提交猜测
+                </button>
+            </div>
+
+            <div id="game-message" class="p-4 rounded-lg mb-4 hidden transition-all duration-300"></div>
+        </div>
+
+        <!-- 猜测历史记录 -->
+        <div class="bg-white rounded-xl shadow-md p-6 flex-grow transition-all duration-300">
+            <h2 class="text-xl font-bold text-neutral mb-4 flex items-center">
+                <i class="fa fa-history text-primary mr-2"></i>猜测记录
+            </h2>
+            <div id="history-container" class="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                <div class="text-center text-neutral/50 italic py-8">
+                    还没有猜测记录，开始游戏吧！
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-neutral text-white py-6 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center justify-center md:justify-start space-x-2">
+                        <i class="fa fa-gamepad text-primary text-xl"></i>
+                        <span class="font-medium">猜数字游戏</span>
+                    </div>
+                    <p class="text-sm text-white/70 mt-1 text-center md:text-left">
+                        一个有趣的数字推理游戏
+                    </p>
+                </div>
+                <div class="flex space-x-4">
+                    <button id="restart-button" 
+                        class="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-lg font-medium transition-all flex items-center">
+                        <i class="fa fa-refresh mr-2"></i>
+                        重新开始
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 游戏状态
+        const gameState = {
+            secretNumber: '',
+            attempts: [],
+            isGameOver: false
+        };
+
+        // DOM 元素
+        const elements = {
+            guessInput: document.getElementById('guess-input'),
+            guessButton: document.getElementById('guess-button'),
+            inputError: document.getElementById('input-error'),
+            gameMessage: document.getElementById('game-message'),
+            historyContainer: document.getElementById('history-container'),
+            restartButton: document.getElementById('restart-button'),
+            fireworksContainer: document.getElementById('fireworks-container')
+        };
+
+        // 初始化游戏
+        function initGame() {
+            generateSecretNumber();
+            updateGameState();
+            setupEventListeners();
+        }
+
+        // 生成随机神秘数字
+        function generateSecretNumber() {
+            const digits = Array.from({length: 9}, (_, i) => i + 1);
+            const shuffled = digits.sort(() => Math.random() - 0.5);
+            gameState.secretNumber = shuffled.slice(0, 2).join('');
+            console.log('Secret number:', gameState.secretNumber); // 仅用于开发测试
+        }
+
+        // 设置事件监听
+        function setupEventListeners() {
+            elements.guessButton.addEventListener('click', handleGuess);
+            elements.guessInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleGuess();
+            });
+            elements.restartButton.addEventListener('click', restartGame);
+            
+            // 输入验证
+            elements.guessInput.addEventListener('input', validateInput);
+        }
+
+        // 验证输入
+        function validateInput() {
+            const value = elements.guessInput.value;
+            elements.inputError.classList.add('hidden');
+            
+            // 限制只能输入数字
+            elements.guessInput.value = value.replace(/[^1-9]/g, '');
+            
+            // 防止重复数字
+            if (value.length === 2 && value[0] === value[1]) {
+                elements.guessInput.value = value[0];
+            }
+        }
+
+        // 处理猜测
+        function handleGuess() {
+            if (gameState.isGameOver) return;
+            
+            const guess = elements.guessInput.value.trim();
+            
+            if (!validateGuess(guess)) {
+                return;
+            }
+            
+            const result = evaluateGuess(guess);
+            gameState.attempts.push({ guess, result });
+            
+            updateGameState();
+            elements.guessInput.value = '';
+            
+            if (result === '2A0B') {
+                gameOver(true);
+            }
+        }
+
+        // 验证猜测
+        function validateGuess(guess) {
+            if (guess.length !== 2) {
+                showError('请输入两位数字');
+                return false;
+            }
+            
+            if (!/^[1-9]{2}$/.test(guess)) {
+                showError('请输入1-9的数字，且不可重复');
+                return false;
+            }
+            
+            if (guess[0] === guess[1]) {
+                showError('两位数字不能相同');
+                return false;
+            }
+            
+            // 检查是否已经猜过
+            if (gameState.attempts.some(a => a.guess === guess)) {
+                showError('你已经猜过这个数字了');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            elements.inputError.textContent = message;
+            elements.inputError.classList.remove('hidden');
+            elements.guessInput.classList.add('border-red-500');
+            
+            setTimeout(() => {
+                elements.guessInput.classList.remove('border-red-500');
+            }, 2000);
+        }
+
+        // 评估猜测结果
+        function evaluateGuess(guess) {
+            const secret = gameState.secretNumber;
+            let aCount = 0;
+            let bCount = 0;
+            
+            for (let i = 0; i < 2; i++) {
+                if (guess[i] === secret[i]) {
+                    aCount++;
+                } else if (secret.includes(guess[i])) {
+                    bCount++;
+                }
+            }
+            
+            return `${aCount}A${bCount}B`;
+        }
+
+        // 更新游戏状态显示
+        function updateGameState() {
+            updateHistoryDisplay();
+            
+            if (gameState.attempts.length > 0) {
+                const lastAttempt = gameState.attempts[gameState.attempts.length - 1];
+                showGameMessage(`你猜的是 ${lastAttempt.guess}，结果：${lastAttempt.result}`, 
+                    lastAttempt.result === '2A0B' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-blue-50 border-blue-200 text-blue-700');
+            } else {
+                elements.gameMessage.classList.add('hidden');
+            }
+        }
+
+        // 显示游戏消息
+        function showGameMessage(message, className) {
+            elements.gameMessage.textContent = message;
+            elements.gameMessage.className = `p-4 rounded-lg mb-4 ${className} transition-all duration-300`;
+            elements.gameMessage.classList.remove('hidden');
+        }
+
+        // 更新历史记录显示
+        function updateHistoryDisplay() {
+            if (gameState.attempts.length === 0) {
+                elements.historyContainer.innerHTML = `
+                    <div class="text-center text-neutral/50 italic py-8">
+                        还没有猜测记录，开始游戏吧！
+                    </div>
+                `;
+                return;
+            }
+            
+            elements.historyContainer.innerHTML = gameState.attempts.map((attempt, index) => {
+                const isCorrect = attempt.result === '2A0B';
+                const bgClass = isCorrect ? 'bg-green-50' : 'bg-white';
+                const borderClass = isCorrect ? 'border-green-200' : 'border-gray-100';
+                const resultClass = isCorrect ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700';
+                
+                return `
+                    <div class="p-3 rounded-lg border ${borderClass} ${bgClass} flex justify-between items-center transition-all hover:shadow-sm">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-sm mr-3">
+                                ${index + 1}
+                            </span>
+                            <span class="font-medium text-neutral">${attempt.guess}</span>
+                        </div>
+                        <span class="px-3 py-1 rounded-full font-medium ${resultClass}">
+                            ${attempt.result}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 游戏结束
+        function gameOver(isWin) {
+            gameState.isGameOver = true;
+            
+            if (isWin) {
+                showGameMessage(`恭喜你！猜对了神秘数字 ${gameState.secretNumber}，共用了 ${gameState.attempts.length} 次尝试！`, 
+                    'bg-green-50 border-green-200 text-green-700');
+                
+                // 显示烟花特效
+                setTimeout(() => {
+                    createFireworks();
+                }, 500);
+            }
+        }
+
+        // 重新开始游戏
+        function restartGame() {
+            gameState.attempts = [];
+            gameState.isGameOver = false;
+            generateSecretNumber();
+            updateGameState();
+            
+            // 隐藏烟花
+            elements.fireworksContainer.classList.add('hidden');
+            elements.fireworksContainer.innerHTML = '';
+        }
+
+        // 创建烟花特效
+        function createFireworks() {
+            elements.fireworksContainer.classList.remove('hidden');
+            
+            // 创建更多烟花，覆盖更广
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    launchFirework();
+                }, i * 400);
+            }
+        }
+
+        // 发射烟花
+        function launchFirework() {
+            const container = elements.fireworksContainer;
+            const firework = document.createElement('div');
+            
+            // 随机位置和颜色，覆盖面更广
+            const startX = Math.random() * 100;
+            const startY = 100;
+            const endX = startX + (Math.random() * 60 - 30); // 更大的横向覆盖范围
+            const endY = Math.random() * 50; // 更高的爆炸点
+            const hue = Math.random() * 360;
+            
+            firework.className = 'absolute w-2 h-2 bg-white rounded-full';
+            firework.style.left = `${startX}%`;
+            firework.style.bottom = `${startY}%`;
+            firework.style.boxShadow = '0 0 10px rgba(255,255,255,0.8)';
+            firework.style.transition = 'all 0.7s cubic-bezier(0.1, 0.8, 0.2, 1)';
+            
+            container.appendChild(firework);
+            
+            // 发射烟花
+            setTimeout(() => {
+                firework.style.left = `${endX}%`;
+                firework.style.bottom = `${endY}%`;
+                firework.style.opacity = '0';
+                
+                // 爆炸效果
+                setTimeout(() => {
+                    container.removeChild(firework);
+                    explode(endX, endY, hue);
+                }, 700);
+            }, 10);
+        }
+
+        // 烟花爆炸
+        function explode(x, y, hue) {
+            const container = elements.fireworksContainer;
+            const particles = 80; // 更多粒子，效果更密集
+            
+            for (let i = 0; i < particles; i++) {
+                const particle = document.createElement('div');
+                const angle = (i / particles) * 360;
+                const distance = Math.random() * 25; // 更大的散射范围
+                const size = Math.random() * 4 + 1; // 更大的粒子尺寸
+                const duration = Math.random() * 1.5 + 1; // 更长的持续时间
+                
+                particle.className = 'absolute rounded-full';
+                particle.style.left = `${x}%`;
+                particle.style.bottom = `${y}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.backgroundColor = `hsl(${hue}, 100%, ${50 + Math.random() * 30}%)`;
+                particle.style.boxShadow = `0 0 8px hsl(${hue}, 100%, 70%)`; // 更强的光晕效果
+                particle.style.transform = 'translate(-50%, -50%)';
+                particle.style.transition = `all ${duration}s cubic-bezier(0.1, 0.8, 0.2, 1)`;
+                particle.style.opacity = '1';
+                
+                container.appendChild(particle);
+                
+                // 粒子散开
+                setTimeout(() => {
+                    const finalX = x + Math.cos(angle * Math.PI / 180) * distance;
+                    const finalY = y + Math.sin(angle * Math.PI / 180) * distance;
+                    
+                    particle.style.left = `${finalX}%`;
+                    particle.style.bottom = `${finalY}%`;
+                    particle.style.opacity = '0';
+                    
+                    // 移除粒子
+                    setTimeout(() => {
+                        container.removeChild(particle);
+                    }, duration * 1000);
+                }, 10);
+            }
+        }
+
+        // 页面加载完成后初始化游戏
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
+    
