@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>爆炸数字猜猜猜</title>
+<style>
+:root{
+  --primary:#ff7e5f;
+  --secondary:#feb47b;
+  --gray:#f7f7f7;
+  --dark:#333;
+  --radius:1rem;
+}
+html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
+body{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.card{
+  background:#fff;
+  padding:2rem 2.5rem;
+  border-radius:var(--radius);
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+  width:90%;
+  max-width:500px;
+  animation:fadeIn .8s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+.hidden{display:none !important;}
+h2{margin-top:0;text-align:center;color:var(--dark);}
+fieldset{border:none;margin:1rem 0;}
+label{margin-right:1rem;}
+input[type=number],input[type=text]{padding:.4rem .6rem;border:1px solid #ccc;border-radius:4px;}
+button{
+  background:var(--primary);
+  border:none;
+  color:#fff;
+  padding:.6rem 1.2rem;
+  border-radius:var(--radius);
+  cursor:pointer;
+  transition:transform .15s;
+}
+button:hover{transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,.2);}  
+.range-display{font-size:1.25rem;margin-bottom:1rem;text-align:center;}
+.player-input{display:flex;gap:.5rem;align-items:center;justify-content:center;margin-top:1rem;}
+#message{text-align:center;font-weight:bold;margin-top:1rem;}
+
+/* Explosion overlay */
+#explosionOverlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.85);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#fff;font-size:2rem;z-index:999;
+}
+.bomb{position:absolute;font-size:2.5rem;animation:fly 1.2s forwards ease-out;}
+@keyframes fly{from{transform:translate(0,0) scale(1);}to{transform:translate(var(--tx),var(--ty)) rotate(720deg) scale(0);} }
+.shake{animation:shake .4s cubic-bezier(.36,.07,.19,.97) both;}
+@keyframes shake{10%,90%{transform:translate3d(-1px,0,0);}20%,80%{transform:translate3d(2px,0,0);}30%,50%,70%{transform:translate3d(-4px,0,0);}40%,60%{transform:translate3d(4px,0,0);} }
+
+@media(max-width:550px){.card{padding:1.5rem 1rem;}}
+</style>
+</head>
+<body>
+<!-- Setup Card -->
+<div class="card" id="setupCard">
+  <h2>设置游戏</h2>
+  <fieldset>
+    <legend>选择数字范围</legend>
+    <label><input type="radio" name="range" value="100">0~100</label>
+    <label><input type="radio" name="range" value="200">0~200</label>
+    <label><input type="radio" name="range" value="500">0~500</label>
+    <label><input type="radio" name="range" value="custom">自定义
+      <input type="number" id="customMax" min="2" placeholder="上限">
+    </label>
+  </fieldset>
+  <fieldset>
+    <legend>玩家人数</legend>
+    <label><input type="radio" name="playerCount" value="2" checked>2人</label>
+    <label><input type="radio" name="playerCount" value="3">3人</label>
+    <label><input type="radio" name="playerCount" value="4">4人</label>
+  </fieldset>
+  <div id="playerNames"></div>
+  <div style="text-align:center;margin-top:1.2rem;">
+    <button id="startBtn">开始游戏</button>
+  </div>
+</div>
+
+<!-- Game Card -->
+<div class="card hidden" id="gameCard">
+  <div class="range-display" id="rangeText"></div>
+  <div id="turnInfo" style="text-align:center;font-weight:bold;"></div>
+  <div class="player-input">
+    <label id="playerLabel"></label>
+    <input type="number" id="guessInput">
+    <button id="guessBtn">提交</button>
+  </div>
+  <div id="message"></div>
+</div>
+
+<!-- Explosion Overlay -->
+<div id="explosionOverlay" class="hidden">
+  <div id="explosionMsg"></div>
+  <div style="margin-top:2rem;display:flex;gap:1rem;">
+    <button id="restartBtn">重新开始</button>
+    <button id="changeSettingsBtn">修改设置并开始</button>
+  </div>
+</div>
+
+<script>
+// Elements
+const setupCard=document.getElementById('setupCard');
+const gameCard=document.getElementById('gameCard');
+const explosionOverlay=document.getElementById('explosionOverlay');
+const explosionMsg=document.getElementById('explosionMsg');
+
+const playerNamesDiv=document.getElementById('playerNames');
+const startBtn=document.getElementById('startBtn');
+const rangeText=document.getElementById('rangeText');
+const turnInfo=document.getElementById('turnInfo');
+const playerLabel=document.getElementById('playerLabel');
+const guessInput=document.getElementById('guessInput');
+const guessBtn=document.getElementById('guessBtn');
+const messageDiv=document.getElementById('message');
+
+const restartBtn=document.getElementById('restartBtn');
+const changeSettingsBtn=document.getElementById('changeSettingsBtn');
+
+// State
+let maxRange=100,minRange=0,answer=0;
+let players=[],currentPlayer=0,gameOver=false;
+
+function updatePlayerInputs(){
+  playerNamesDiv.innerHTML='';
+  const count=+document.querySelector('input[name="playerCount"]:checked').value;
+  for(let i=0;i<count;i++){
+    const input=document.createElement('input');
+    input.type='text';
+    input.placeholder=`玩家${i+1}名字`;
+    input.style="margin-bottom:.5rem;width:100%";
+    playerNamesDiv.appendChild(input);
+  }
+}
+document.querySelectorAll('input[name="playerCount"]').forEach(r=>r.addEventListener('change',updatePlayerInputs));
+updatePlayerInputs();
+
+startBtn.addEventListener('click',startGame);
+function startGame(){
+  // Range
+  const rangeChoice=document.querySelector('input[name="range"]:checked');
+  if(!rangeChoice){alert('请选择范围');return;}
+  if(rangeChoice.value==='custom'){
+    const val=+document.getElementById('customMax').value;
+    if(!val||val<=1){alert('请输入有效自定义上限(>1)');return;}
+    maxRange=val;
+  }else{maxRange=+rangeChoice.value;}
+
+  // Players
+  players=[];
+  playerNamesDiv.querySelectorAll('input').forEach((inp,idx)=>{
+    const name=inp.value.trim()||`玩家${idx+1}`;
+    players.push(name);
+  });
+  if(players.length<2){alert('至少两名玩家');return;}
+
+  // Answer
+  answer=Math.floor(Math.random()*(maxRange-1))+1;
+
+  // Show game
+  setupCard.classList.add('hidden');
+  gameCard.classList.remove('hidden');
+  resetGame();
+  guessInput.focus();
+}
+
+function resetGame(){
+  minRange=0;
+  rangeText.textContent=`当前范围: ${minRange} ~ ${maxRange}`;
+  currentPlayer=0;
+  messageDiv.textContent='';
+  gameOver=false;
+  updateTurnDisplay();
+  guessInput.value='';
+}
+function updateTurnDisplay(){
+  playerLabel.textContent=`${players[currentPlayer]}:`;
+  turnInfo.textContent=`轮到 ${players[currentPlayer]}`;
+}
+
+// Guess logic
+guessBtn.addEventListener('click',()=>{
+  if(gameOver) return;
+  const val=+guessInput.value;
+  if(!val || val<=minRange || val>=maxRange){
+    alert(`请输入大于${minRange}且小于${maxRange}的数字`);
+    return;
+  }
+  guessInput.value='';
+  document.body.classList.add('shake');
+  setTimeout(()=>document.body.classList.remove('shake'),400);
+
+  if(val===answer){
+    explode();
+  }else if(val>answer){
+    messageDiv.textContent='大了!';
+    maxRange=val;
+  }else{
+    messageDiv.textContent='小了!';
+    minRange=val;
+  }
+  if(!gameOver){
+    rangeText.textContent=`当前范围: ${minRange} ~ ${maxRange}`;
+    currentPlayer=(currentPlayer+1)%players.length;
+    updateTurnDisplay();
+  }
+});
+
+// Explosion effect
+function explode(){
+  gameOver=true;
+  explosionMsg.innerHTML=`<span style="color:#ffcc00;">💥</span> ${players[currentPlayer]} 爆炸！正确数字是 <strong>${answer}</strong>`;
+  explosionOverlay.classList.remove('hidden');
+  // Create bombs
+  for(let i=0;i<25;i++){
+    const span=document.createElement('span');
+    span.className='bomb';
+    span.textContent='💣';
+    span.style.left='50%';
+    span.style.top='50%';
+    const angle=Math.random()*2*Math.PI;
+    const dist=window.innerWidth*0.6*Math.random();
+    span.style.setProperty('--tx',`${Math.cos(angle)*dist}px`);
+    span.style.setProperty('--ty',`${Math.sin(angle)*dist}px`);
+    explosionOverlay.appendChild(span);
+    // remove after animation
+    setTimeout(()=>span.remove(),1200);
+  }
+}
+
+// Buttons after explosion
+restartBtn.addEventListener('click',()=>{
+  explosionOverlay.classList.add('hidden');
+  resetGame();
+  gameCard.classList.remove('hidden');
+});
+changeSettingsBtn.addEventListener('click',()=>{
+  explosionOverlay.classList.add('hidden');
+  gameCard.classList.add('hidden');
+  setupCard.classList.remove('hidden');
+  // clean up bombs if any lingering
+  document.querySelectorAll('.bomb').forEach(b=>b.remove());
+});
+</script>
+</body>
+</html>
