@@ -1,0 +1,488 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老年人体味去除秘方分析报告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #FFFFFF;
+        }
+        .card {
+            background-color: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            position: relative;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .highlight-gradient-blue {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0), rgba(59, 130, 246, 0.05));
+        }
+        .highlight-gradient-green {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0), rgba(16, 185, 129, 0.05));
+        }
+        .highlight-gradient-purple {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0), rgba(139, 92, 246, 0.05));
+        }
+        .highlight-gradient-amber {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0), rgba(245, 158, 11, 0.05));
+        }
+        .highlight-gradient-red {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0), rgba(239, 68, 68, 0.05));
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            transition: width 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+        <!-- 标题卡片 -->
+        <div class="card md:col-span-4 p-8 flex flex-col justify-center items-center text-center mb-6">
+            <div class="absolute top-0 left-0 w-full h-full highlight-gradient-blue"></div>
+            <div class="relative w-full">
+                <div class="text-gray-400 text-lg font-medium tracking-wider mb-2">SENIOR DEODORANT FORMULA ANALYSIS</div>
+                <div class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">老年人体味去除秘方</div>
+                <div class="text-4xl md:text-5xl font-bold text-blue-600">科学评估与产品开发报告</div>
+            </div>
+        </div>
+
+        <!-- 主内容网格 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
+            
+            <!-- 成因机制卡片 -->
+            <div class="card md:col-span-2 md:row-span-2 p-8 flex flex-col">
+                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-green"></div>
+                <div class="relative flex flex-col flex-grow">
+                    <div class="flex items-center mb-6">
+                        <i class="fa-solid fa-microscope text-3xl text-green-500 mr-4"></i>
+                        <div class="text-2xl font-bold text-gray-800">老年人体味成因机制</div>
+                    </div>
+                    
+                    <div class="flex items-center justify-center my-6">
+                        <div class="text-center">
+                            <div class="text-7xl font-bold text-green-600">3倍</div>
+                            <div class="text-gray-600 mt-2">高龄老人2-壬烯醛含量</div>
+                            <div class="text-gray-400 text-sm">(相比40岁人群)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 text-gray-700">
+                        <div class="flex items-start">
+                            <i class="fa-solid fa-circle-minus text-green-500 mt-1.5 mr-3"></i>
+                            <div>omega-7不饱和脂肪酸氧化降解产生2-壬烯醛</div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fa-solid fa-circle-minus text-green-500 mt-1.5 mr-3"></i>
+                            <div>皮肤新陈代谢速率下降<span class="font-bold text-green-600">30%</span>以上</div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fa-solid fa-circle-minus text-green-500 mt-1.5 mr-3"></i>
+                            <div>大汗腺萎缩导致分泌物成分改变</div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fa-solid fa-circle-minus text-green-500 mt-1.5 mr-3"></i>
+                            <div>皮脂氧化与细菌分解共同作用</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 成分分析卡片 -->
+            <div class="card md:col-span-2 p-8 flex flex-col">
+                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-purple"></div>
+                <div class="relative flex flex-col flex-grow">
+                    <div class="flex items-center mb-6">
+                        <i class="fa-solid fa-flask-vial text-3xl text-purple-500 mr-4"></i>
+                        <div class="text-2xl font-bold text-gray-800">配方成分分析</div>
+                    </div>
+                    
+                    <div class="space-y-6 flex-grow">
+                        <!-- 樟脑 -->
+                        <div class="flex items-center">
+                            <div class="w-20 text-lg font-semibold text-gray-700">樟脑</div>
+                            <div class="flex-1 mx-4">
+                                <div class="progress-bar bg-gray-200">
+                                    <div class="progress-fill bg-purple-500" style="width: 25%"></div>
+                                </div>
+                            </div>
+                            <div class="w-16 text-right font-bold text-purple-600">2g</div>
+                        </div>
+                        <div class="text-sm text-gray-500 ml-20">抗菌、抗炎、皮肤渗透促进作用</div>
+                        
+                        <!-- 明矾 -->
+                        <div class="flex items-center">
+                            <div class="w-20 text-lg font-semibold text-gray-700">明矾</div>
+                            <div class="flex-1 mx-4">
+                                <div class="progress-bar bg-gray-200">
+                                    <div class="progress-fill bg-purple-500" style="width: 25%"></div>
+                                </div>
+                            </div>
+                            <div class="w-16 text-right font-bold text-purple-600">2g</div>
+                        </div>
+                        <div class="text-sm text-gray-500 ml-20">收敛剂、抗菌剂、减少汗液分泌</div>
+                        
+                        <!-- 石炭酸 -->
+                        <div class="flex items-center">
+                            <div class="w-20 text-lg font-semibold text-gray-700">石炭酸</div>
+                            <div class="flex-1 mx-4">
+                                <div class="progress-bar bg-gray-200">
+                                    <div class="progress-fill bg-purple-500" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            <div class="w-16 text-right font-bold text-purple-600">4g</div>
+                        </div>
+                        <div class="text-sm text-gray-500 ml-20">强效杀菌剂、原生质毒、皮肤腐蚀性</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 安全性评估卡片 -->
+            <div class="card md:col-span-2 p-8 flex flex-col">
+                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-red"></div>
+                <div class="relative flex flex-col flex-grow">
+                    <div class="flex items-center mb-6">
+                        <i class="fa-solid fa-shield-halved text-3xl text-red-500 mr-4"></i>
+                        <div class="text-2xl font-bold text-gray-800">安全性评估</div>
+                    </div>
+                    
+                    <div class="flex items-center justify-center my-4">
+                        <div class="text-center">
+                            <div class="text-7xl font-bold text-red-600">高风险</div>
+                            <div class="text-gray-600 mt-2">配方安全等级</div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 text-gray-700">
+                        <div class="flex items-start">
+                            <i class="fa-solid fa-triangle-exclamation text-red-500 mt-1.5 mr-3"></i>
+                            <div>苯酚浓度<span class="font-bold text-red-600">50%</span>，远超安全范围</div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fa-solid fa-triangle-exclamation text-red-500 mt-1.5 mr-3"></i>
+                            <div>樟脑口服<span class="font-bold text-red-600">2g</span>即可引起中毒症状</div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fa-solid fa-triangle-exclamation text-red-500 mt-1.5 mr-3"></i>
+                            <div>苯酚即使<span class="font-bold text-red-600">1-2%</span>溶液也可能造成严重灼伤</div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fa-solid fa-triangle-exclamation text-red-500 mt-1.5 mr-3"></i>
+                            <div>老年人皮肤敏感，使用风险更大</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 产品开发可行性卡片 -->
+            <div class="card md:col-span-4 p-8 flex flex-col">
+                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-amber"></div>
+                <div class="relative flex flex-col flex-grow">
+                    <div class="flex items-center mb-6">
+                        <i class="fa-solid fa-cogs text-3xl text-amber-500 mr-4"></i>
+                        <div class="text-2xl font-bold text-gray-800">产品开发可行性分析</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
+                        <!-- 主要挑战 -->
+                        <div class="bg-white/50 rounded-lg p-6">
+                            <div class="text-xl font-bold text-amber-600 mb-4 flex items-center">
+                                <i class="fa-solid fa-angles-right mr-2"></i>主要挑战
+                            </div>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-xmark text-red-500 mt-1.5 mr-2"></i>
+                                    <span>苯酚浓度过高，安全性差</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-xmark text-red-500 mt-1.5 mr-2"></i>
+                                    <span>樟脑挥发性强，稳定性差</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-xmark text-red-500 mt-1.5 mr-2"></i>
+                                    <span>成分溶解性差异大</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-xmark text-red-500 mt-1.5 mr-2"></i>
+                                    <span>法规限制严格</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- 技术方案 -->
+                        <div class="bg-white/50 rounded-lg p-6">
+                            <div class="text-xl font-bold text-amber-600 mb-4 flex items-center">
+                                <i class="fa-solid fa-angles-right mr-2"></i>技术方案
+                            </div>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-check text-green-500 mt-1.5 mr-2"></i>
+                                    <span>使用<span class="font-semibold">70%乙醇</span>作为溶剂</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-check text-green-500 mt-1.5 mr-2"></i>
+                                    <span>调节pH至<span class="font-semibold">4.5-6.5</span>安全范围</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-check text-green-500 mt-1.5 mr-2"></i>
+                                    <span>添加抗氧化剂和防腐剂</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-check text-green-500 mt-1.5 mr-2"></i>
+                                    <span>使用定量喷雾泵包装</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- 气味改善 -->
+                        <div class="bg-white/50 rounded-lg p-6">
+                            <div class="text-xl font-bold text-amber-600 mb-4 flex items-center">
+                                <i class="fa-solid fa-angles-right mr-2"></i>气味改善
+                            </div>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-leaf text-green-500 mt-1.5 mr-2"></i>
+                                    <span>添加薄荷油和茶树油</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-leaf text-green-500 mt-1.5 mr-2"></i>
+                                    <span>使用环糊精包合技术</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-leaf text-green-500 mt-1.5 mr-2"></i>
+                                    <span>控制香料总量在<span class="font-semibold">5-10%</span></span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-leaf text-green-500 mt-1.5 mr-2"></i>
+                                    <span>进行兼容性和过敏测试</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 成分协同作用图表卡片 -->
+            <div class="card md:col-span-2 p-8 flex flex-col">
+                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-blue"></div>
+                <div class="relative flex flex-col flex-grow">
+                    <div class="flex items-center mb-6">
+                        <i class="fa-solid fa-chart-simple text-3xl text-blue-500 mr-4"></i>
+                        <div class="text-2xl font-bold text-gray-800">成分协同作用分析</div>
+                    </div>
+                    
+                    <div class="flex-grow h-64">
+                        <canvas id="synergyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 风险评估雷达图卡片 -->
+            <div class="card md:col-span-2 p-8 flex flex-col">
+                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-red"></div>
+                <div class="relative flex flex-col flex-grow">
+                    <div class="flex items-center mb-6">
+                        <i class="fa-solid fa-chart-line text-3xl text-red-500 mr-4"></i>
+                        <div class="text-2xl font-bold text-gray-800">风险评估分布</div>
+                    </div>
+                    
+                    <div class="flex-grow h-64">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 结论与建议卡片 -->
+            <div class="card md:col-span-4 p-8 flex flex-col">
+                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-purple"></div>
+                <div class="relative flex flex-col flex-grow">
+                    <div class="flex items-center mb-6">
+                        <i class="fa-solid fa-lightbulb text-3xl text-purple-500 mr-4"></i>
+                        <div class="text-2xl font-bold text-gray-800">结论与建议</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
+                        <!-- 主要结论 -->
+                        <div>
+                            <div class="text-xl font-bold text-purple-600 mb-4">主要结论</div>
+                            <div class="space-y-4 text-gray-700">
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-circle-minus text-purple-500 mt-1.5 mr-3"></i>
+                                    <div>配方缺乏直接针对老年人体味的科学研究证据</div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-circle-minus text-purple-500 mt-1.5 mr-3"></i>
+                                    <div>苯酚浓度(50%)严重超标，存在<span class="font-bold text-red-600">严重安全隐患</span></div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-circle-minus text-purple-500 mt-1.5 mr-3"></i>
+                                    <div>三种成分均可能引起皮肤刺激，联合使用风险叠加</div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-circle-minus text-purple-500 mt-1.5 mr-3"></i>
+                                    <div>对老年人等特殊人群风险更大</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 建议 -->
+                        <div>
+                            <div class="text-xl font-bold text-purple-600 mb-4">建议</div>
+                            <div class="space-y-4 text-gray-700">
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-circle-check text-green-500 mt-1.5 mr-3"></i>
+                                    <div>将苯酚浓度降低至<span class="font-bold text-green-600">1%以下</span></div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-circle-check text-green-500 mt-1.5 mr-3"></i>
+                                    <div>添加皮肤保护剂和缓冲系统</div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-circle-check text-green-500 mt-1.5 mr-3"></i>
+                                    <div>使用薄荷油和茶树油改善气味</div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-circle-check text-green-500 mt-1.5 mr-3"></i>
+                                    <div>优先考虑市售安全产品，或咨询专业医生</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    // 成分协同作用图表
+    const synergyCtx = document.getElementById('synergyChart').getContext('2d');
+    const synergyChart = new Chart(synergyCtx, {
+        type: 'bar',
+        data: {
+            labels: ['抗菌谱互补', '作用机制协同', 'pH调节作用', '皮肤渗透促进', '气味协同'],
+            datasets: [{
+                label: '协同作用强度',
+                data: [85, 90, 75, 60, 20],
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.7)',
+                    'rgba(16, 185, 129, 0.7)',
+                    'rgba(245, 158, 11, 0.7)',
+                    'rgba(139, 92, 246, 0.7)',
+                    'rgba(239, 68, 68, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(245, 158, 11, 1)',
+                    'rgba(139, 92, 246, 1)',
+                    'rgba(239, 68, 68, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // 风险评估雷达图
+    const riskCtx = document.getElementById('riskChart').getContext('2d');
+    const riskChart = new Chart(riskCtx, {
+        type: 'radar',
+        data: {
+            labels: ['皮肤刺激', '全身毒性', '过敏风险', '环境风险', '法规风险'],
+            datasets: [{
+                label: '风险水平',
+                data: [90, 85, 70, 60, 80],
+                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                borderColor: 'rgba(239, 68, 68, 1)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(239, 68, 68, 1)'
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            scales: {
+                r: {
+                    angleLines: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    pointLabels: {
+                        font: {
+                            size: 12
+                        }
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // 进度条动画
+    document.addEventListener('DOMContentLoaded', function() {
+        const progressBars = document.querySelectorAll('.progress-fill');
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 300);
+        });
+    });
+</script>
+</html>
